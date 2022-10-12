@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<head>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="css/craft.css">
+    <link href="https://fonts.googleapis.com/css?family=Aldrich&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Mono&display=swap" rel="stylesheet">
+    <title>Dual Universe Crafting Calculator</title>
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-P52PMV90FX"></script> -->
+    <script>
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+
+        // gtag('js', new Date());
+        // gtag('config', 'G-P52PMV90FX');
+    </script>
+</head>
+<html lang="en-US">
+<body>
+
+<nav class="navbar">
+<!--     <button class="bugButton" style="float:left;margin:0 5px;"><a
+            href="https://github.com/AstronIsTaken/du-craft/issues" target="_blank"> >>> Report Issues!! <<< </a>
+    </button> -->
+    <button id="skillsButton" style="float:left;margin:0 5px;">Skills</button>
+    <button id="priceButton" style="float:left;margin:0 5px;">Prices</button>
+    <button id="profileButton" style="float:left;margin:0 5px;">Save/Load Profiles</button>
+    <button id="clearButton" style="float:left;margin:0 5px;" class="bugButton">Reset</button>
+    <button id="langButton" style="float:left;margin:0 5px;display:none;">&#128214;</button>
+    <button id="getDataButton" style="float:left;margin:0 5px;">Copy Config</button>
+    <button id="setDataButton" style="float:left;margin:0 5px;">Paste Config</button>
+
+<!--     <span style="color:#fff;float:left;padding:0 0 0 15px;">Updated on&nbsp;<a id="lastUpdateTime"
+                                                                               href="https://github.com/AstronIsTaken/du-craft/releases"
+                                                                               target="_blank">Loading</a></span> -->
+    <span class="navright legend">
+<span class="tier-1 tier-all">1 : Basic</span>
+<span class="tier-2 tier-all">2 : Uncommon</span>
+<span class="tier-3 tier-all">3 : Advanced</span>
+<span class="tier-4 tier-all">4 : Rare</span>
+<span class="tier-5 tier-all">5 : Exotic</span>
+</span>
+
+
+</nav>
+
+<div class="main-container flex-container">
+    <div class="flex-box1 section-divider">
+        <div class="section-header list-item" style="justify-content:space-between;">
+            Your Inventory
+            <button id="invClearBut" class="clear-button">Clear</button>
+        </div>
+        <br>
+        <div id="invList" class="grid-container1">
+            <div class="list-header" style="margin-left:-5px;"></div>
+            <div class="list-header">Item Name</div>
+            <div class="list-header">Quantity</div>
+        </div>
+        <button id="invAddBut">+ Add More Items +</button>
+    </div>
+    <div class="flex-box1 section-divider">
+        <div class="section-header list-item" style="justify-content:space-between;">
+            Items To Craft
+            <button id="craftClearBut" class="clear-button">Clear</button>
+        </div>
+        <br>
+        <div id="cftList" class="grid-container1">
+            <div class="list-header" style="margin-left:-5px;"></div>
+            <div class="list-header">Item Name</div>
+            <div class="list-header">Quantity</div>
+        </div>
+        <button id="cftAddBut">+ Add More Items +</button>
+    </div>
+    <div class="flex-box1 section-divider">
+        <div class="section-header list-item">Required Ore</div>
+        <br>
+        <br>
+        <div id="oreList" class="grid-container2">
+            <div class="list-header">Item Name</div>
+            <div class="list-header">Quantity</div>
+            <div class="list-header">Price</div>
+            <div class="list-header" style="margin-left:-5px;"></div>
+        </div>
+    </div>
+    <div class="flex-box2 section-divider">
+        <div class="section-header list-item" style="justify-content:space-between;">
+            Crafting Queue
+            <button id="detailedCraftQueueButton" class="clear-button">Detailed View</button>
+        </div>
+        <span class="totals hidden">Crafting Time:
+			<span id="totalTime"></span>
+		</span>
+
+        <br>
+        <div id="queueList" class="grid-container3">
+            <div class="list-header">Item Name</div>
+            <div class="list-header">Quantity</div>
+            <div class="list-header">Time</div>
+            <div class="list-header" style="margin-left:-5px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Item selection modal -->
+<div id="itemsModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="itemsModalClose" class="modal-close">&times;</span>
+            <h2>Item Selection</h2>
+            <span style="padding:0 16px 0 0;">Item Filter</span><span>
+		<input type="text" id="itemFilter" style="width:50%;">
+	  </span>
+        </div>
+        <div id="itemAccordion" class="modal-body">
+        </div>
+    </div>
+
+</div>
+
+<!-- skills modal -->
+<div id="skillsModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="skillsModalClose" class="modal-close">&times;</span>
+            <h2>Skills</h2>
+        </div>
+        <div class="modal-body">
+            <label class="checkbox-container">Show only applicable skills
+                <input id="onlyApplicableSkills" type="checkbox" onchange="onOnlyApplicableSkills(this.checked)">
+                <span class="checkbox-checkmark"></span>
+            </label>
+            <div id="skillTreeDiv"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- profile save modal -->
+<div id="profileModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-profile">
+        <div class="modal-header">
+            <span id="profileModalClose" class="modal-close">&times;</span>
+            <h2>Profiles</h2>
+        </div>
+        <div id="profileDialog" class="modal-body">
+            <h3>Save</h3>
+            <button id="profileSaveButton">Save</button>
+            <input type="text" id="profileSaveInput">
+            <h3>Load</h3>
+            <button id="profileLoadButton">Load</button>
+            <select id="profileList"></select>
+            <h3>Delete</h3>
+            <button id="profileDeleteButton">Delete</button>
+            <select id="profileDeleteList"></select>
+            <br>
+            <br>
+            <button id="clearProfiles" class="bugButton">Delete All</button>
+        </div>
+    </div>
+
+</div>
+
+<!-- detailed craft queue modal -->
+
+<div id="craftQueueModal" class="modal-craft" style="display:none;">
+    <div class="modal-header">
+        <span id="craftQueueModalClose" class="modal-close">&times;</span>
+        <h2>Crafting Queue Details</h2>
+
+    </div>
+
+    <div id="queueListDetailed" class="grid-container4">
+        <div class="list-header">Item Name</div>
+        <div class="list-header quantity-color">Quantity</div>
+        <div class="list-header quantity-color">Byproduct</div>
+        <div class="list-header time-color">Time</div>
+        <div class="list-header">Industry</div>
+        <div class="list-header">Maintain Minimum</div>
+    </div>
+
+</div>
+
+
+<!-- price modal -->
+<div id="priceModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="priceModalClose" class="modal-close">&times;</span>
+            <h2>Price Settings</h2>
+        </div>
+        <div id="priceDialog" class="modal-body">
+        </div>
+
+    </div>
+
+</div>
+
+<!-- lang modal -->
+<div id="langModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="langModalClose" class="modal-close">&times;</span>
+            <h2>Language Settings</h2>
+        </div>
+        <div id="langDialog" class="modal-body">
+            <button id="lb_english">English</button>
+            <button id="lb_german">Deutsch</button>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- data modal -->
+<div id="dataModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <div class="modal-header">
+            <span id="dataModalClose" class="modal-close">&times;</span>
+            <h2>Input Config</h2>
+        </div>
+        <div class="modal-body">
+            <textarea id="configta" rows="20" cols="50"></textarea>
+            <button id="doconfigBut">Insert</button>
+        </div>
+    </div>
+
+</div>
+
+<script src="js/crafting_calc.js"></script>
+<script src="js/crafting_calc_interface.js"></script>
+
+</body>
+</html>
